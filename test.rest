@@ -1,1 +1,7 @@
-GET http://localhost:8080/
+
+
+GET  http://localhost:3000/file/download/Ayuc/1.jpg
+
+
+
+
