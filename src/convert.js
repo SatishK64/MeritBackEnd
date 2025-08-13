@@ -1,37 +1,28 @@
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
+
+import {pdfToPng} from 'pdf-to-png-converter';
 import util from 'util';
 
-const execPromise = util.promisify(exec);
 
-/**
- * Converts the first page of a PDF file to a PNG image
- * @param {string} pdfPath - Path to the PDF file
- * @returns {Promise<string>} - Path to the generated PNG file
- */
 export async function convertFirstPageToPng(pdfPath) {
   // Get the directory and filename without extension
   const directory = path.dirname(pdfPath);
   const baseFilename = path.basename(pdfPath, '.pdf');
   const outputPath = path.join(directory, `${baseFilename}.png`);
-
+  console.log(directory)
   try {
-    console.log(`Converting PDF to PNG: ${pdfPath}`);
-    
-    // Use pdftoppm (from poppler) to convert PDF to PNG
-    // -f 1 -l 1: Process only the first page
-    // -png: Output in PNG format
-    // -singlefile: Generate a single file (don't add page numbers to filename)
-    const { stdout, stderr } = await execPromise(
-      `pdftoppm -f 1 -l 1 -png -singlefile "${pdfPath}" "${path.join(directory, baseFilename)}"`
-    );
-    
-    if (stderr) {
-      console.warn('Conversion warning:', stderr);
+    const pngPages = await pdfToPng(pdfPath, { // The function accepts PDF file path or a Buffer
+        viewportScale: 0.75, // The desired scale of PNG viewport. Default value is 1.0 which means to display page on the existing canvas with 100% scale.
+        pagesToProcess: [1], // Subset of pages to convert (first page = 1), other pages will be skipped if specified.
+        strictPagesToProcess: true, // When `true`, will throw an error if specified page number in pagesToProcess is invalid, otherwise will skip invalid page. Default value is false.
+        verbosityLevel: 0, // Verbosity level. ERRORS: 0, WARNINGS: 1, INFOS: 5. Default value is 0.
+    });
+    if (pngPages && pngPages.length > 0) {
+      fs.writeFileSync(outputPath, pngPages[0].content);
+      console.log('File saved manually:', outputPath);
     }
     
-    // console.log(`PNG saved: ${outputPath}`);
     return outputPath;
   } catch (error) {
     console.error('Error converting PDF to PNG:', error);
