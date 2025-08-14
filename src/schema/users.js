@@ -34,6 +34,14 @@ const UserSchema = new mongoose.Schema(
                     type:String,
                     default:"Untitled",
                     required:true
+                },
+                width:{
+                    type:Number,
+                    required:false
+                },
+                height:{
+                    type:Number,
+                    required:false
                 }
             }
         ],

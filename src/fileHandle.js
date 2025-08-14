@@ -1,13 +1,8 @@
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import drive from './ConfigDrive';
 
 
 const router = express.Router();
-
-// Fix for __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 router.get("/",(req,res)=>{
     res.json({message : "hello from fileHandle.js"});
 });
@@ -21,7 +16,7 @@ router.get("/download/:user/:filename",(req,res)=>{
 router.get('/view/:user/:filename', (req, res) => {
     const fileName = req.params.filename;
     const user = req.params.user;
-    const filePath = path.join(__dirname, '../DataBase', user,fileName);
+    const filePath = 
     console.log('File path:', filePath);
     res.sendFile(filePath, (err) => {
         if (err) {

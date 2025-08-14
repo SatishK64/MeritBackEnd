@@ -19,5 +19,6 @@ app.use('/upload',upload);
 app.use("/file",file);
 app.use("/meta",meta);
 const port = process.env.PORT || 3000;
+// console.log(process.env.REFRESHTOKEN);
 app.listen(port, ()=> console.log(`The Server is running on PORT ${port}`))
 
